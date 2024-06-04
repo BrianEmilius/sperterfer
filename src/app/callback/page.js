@@ -1,35 +1,31 @@
-"use server"
-import setCookie from "@/actions/set-cookie"
+"use client"
+
 import axios from "axios"
-import { cookies } from "next/headers"
+import { useEffect } from "react"
 
-export default async function CallbackPage({ searchParams }) {
+export default function CallbackPage({ searchParams }) {
+	async function init() {
+		const response = await axios({
+			method: "POST",
+			url: "http://localhost:3001/api/get-token",
+			data: {
+				code: searchParams.code
+			}
+		})
 
-	const response = await axios({
-		url: "https://accounts.spotify.com/api/token",
-		method: "POST",
-		params: {
-			"grant_type": "authorization_code",
-			"code": searchParams.code,
-			"redirect_uri": "http://localhost:3001/callback"
-		},
-		headers: {
-			"content-type": "application/x-www-form-urlencoded",
-			"Authorization": "Basic " + btoa(process.env.CLIENT_ID + ":" + process.env.CLIENT_SECRET)
-		},
-		json: true
-	})
+		await axios({
+			method: "POST",
+			url: "http://localhost:3001/api/set-cookie",
+			data: {
+				name: "SPRTFR_AT",
+				value: response.data.access_token
+			}
+		})
+	}
 
-	await setCookie("SPRTFR_AT", response.data.access_token)
-	//console.log(response.data)
-
-	const userStuff = await axios.get("https://api.spotify.com/v1/me", {
-		headers: {
-			Authorization: "Bearer " + response.data.access_token
-		}
-	})
-
-	console.log(userStuff)
+	useEffect(function() {
+		init()
+	}, [])
 
 	return null
 }
