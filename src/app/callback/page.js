@@ -2,8 +2,11 @@
 
 import axios from "axios"
 import { useEffect } from "react"
+import { useRouter } from "next/navigation"
 
 export default function CallbackPage({ searchParams }) {
+	const router = useRouter()
+
 	async function init() {
 		const response = await axios({
 			method: "POST",
@@ -25,6 +28,9 @@ export default function CallbackPage({ searchParams }) {
 
 	useEffect(function() {
 		init()
+			.finally(function() {
+				router.push("/home")
+			})
 	}, [])
 
 	return null
