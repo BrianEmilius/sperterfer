@@ -1,7 +1,6 @@
 export default function Home() {
   return (
     <>
-      <h1 className="text-2xl">Sperterfer!</h1>
       <a
         href={"https://accounts.spotify.com/authorize?"
           + "response_type=code&"
