@@ -1,6 +1,4 @@
 "use client"
-
-import getCookie from "@/actions/get-cookie"
 import axios from "axios"
 import { useEffect, useState } from "react"
 
@@ -11,13 +9,36 @@ export default function useAxios(url) {
 	
 	async function init() {
 		try {
-			const token = await getCookie("SPRTFR_AT")
+			const refreshTokenCookie = await axios({
+				method: "GET",
+				url: "http://localhost:3001/api/cookies",
+				params: {
+					name: "SPRTFR_RT"
+				}
+			})
+	
+			console.log(refreshTokenCookie.data.value)
+
+			const newTokenResponse = await axios({
+				method: "POST",
+				url: "",
+				params: {},
+				
+			})
+
+			const cookie = await axios({
+				method: "GET",
+				url: "http://localhost:3001/api/cookies",
+				params: {
+					name: "SPRTFR_AT"
+				}
+			})
 			
 			const response = await axios({
 				method: "GET",
 				url,
 				headers: {
-					Authorization: "Bearer " + token.value
+					Authorization: "Bearer " + cookie.data.value
 				}
 			})
 	
