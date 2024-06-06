@@ -16,12 +16,24 @@ export default function CallbackPage({ searchParams }) {
 			}
 		})
 
+		console.log(response.data)
+
 		await axios({
 			method: "POST",
-			url: "http://localhost:3001/api/set-cookie",
+			url: "http://localhost:3001/api/cookies",
 			data: {
 				name: "SPRTFR_AT",
-				value: response.data.access_token
+				value: response.data.access_token,
+				exp: response.data.expires_in
+			}
+		})
+		await axios({
+			method: "POST",
+			url: "http://localhost:3001/api/cookies",
+			data: {
+				name: "SPRTFR_RT",
+				value: response.data.refresh_token,
+				exp: 3600 * 24 * 365
 			}
 		})
 	}
